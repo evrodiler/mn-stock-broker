@@ -3,9 +3,12 @@ package com.evrim.broker;
 import com.evrim.broker.data.InMemoryStore;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.QueryValue;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Controller("/symbols")
 public class SymbolsController {
@@ -20,5 +23,20 @@ public class SymbolsController {
     {
         return new ArrayList<>(inMemoryStore.getSymbols().values());
         //return new ArrayList<>();
+    }
+    @Get("{value}")
+    public Symbol getSymbolByValue(@PathVariable String value)
+    {
+        return inMemoryStore.getSymbols().get(value);
+    }
+
+    @Get("/filter{?max,offset}")
+    public List<Symbol> getSymbols(@QueryValue Optional<Integer> max, Optional<Integer> offset)
+    {
+        return inMemoryStore.getSymbols().values()
+                .stream()
+                .skip(offset.orElse(0))
+                .limit(max.orElse(10))
+                .toList();
     }
 }
