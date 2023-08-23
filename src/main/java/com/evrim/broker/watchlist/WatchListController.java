@@ -1,11 +1,10 @@
 package com.evrim.broker.watchlist;
 
 import com.evrim.broker.data.InMemoryAccountStore;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
-import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.Put;
+import io.micronaut.http.annotation.*;
 
 import java.util.UUID;
 
@@ -23,5 +22,26 @@ public record WatchListController(InMemoryAccountStore store) {
     {
         return store.updateWatchList(ACCOUNT_ID, watchlist);
     }
+
+    //DELETE alternate 1
+    /*    @Status(HttpStatus.NO_CONTENT)
+    @Delete(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public void delete(){
+        store.deleteWatchList(ACCOUNT_ID);
+
+    }*/
+
+    //alternate delete
+    @Delete(
+            produces = MediaType.APPLICATION_JSON
+    )
+    public HttpResponse<Void> delete()
+    {
+        store.deleteWatchList(ACCOUNT_ID);
+        return HttpResponse.noContent();
+    }
+
 
 }
