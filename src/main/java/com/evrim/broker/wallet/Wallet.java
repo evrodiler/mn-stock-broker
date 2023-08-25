@@ -13,5 +13,15 @@ public record Wallet(
     BigDecimal locked
 ) implements RestApiResponse
 {
+    public Wallet addAvailable(BigDecimal amountToAdd)
+    {
+        return new Wallet(
+                this.accountId,
+                this.walletId,
+                this.symbol,
+                this.available.add(amountToAdd),
+                this.locked
+        );
+    }
 
 }

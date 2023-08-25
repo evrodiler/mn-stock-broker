@@ -3,6 +3,7 @@ package com.evrim.broker.wallet;
 import com.evrim.broker.api.RestApiResponse;
 import com.evrim.broker.data.InMemoryAccountStore;
 import com.evrim.broker.wallet.error.CustomError;
+import com.evrim.broker.wallet.error.FiatCurrencyNotSupportedException;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
@@ -46,17 +47,22 @@ public record WalletController(InMemoryAccountStore store) {
         //return HttpResponse.ok();
         var wallet = store.depositToWallet(deposit) ;
         LOG.debug("Deposit to wallet: {}", wallet);
-        return HttpResponse.ok().body(wallet);
+        //return HttpResponse.ok().body(wallet);
+        return HttpResponse.ok();
     }
 
     @Post(value = "/withdraw",
             consumes = MediaType.APPLICATION_JSON,
             produces =  MediaType.APPLICATION_JSON
     )
-    public HttpResponse<Void> depositFiatMoney(@Body WithdrawFiatMoney withdraw)
-    {
-        //option 2 : custom error response
-        return HttpResponse.ok();
+    public void  withdrawFiatMoney(@Body WithdrawFiatMoney withdraw) throws FiatCurrencyNotSupportedException {
+        //option 2 : Custom Error response
+        if (!SUPPORTED_FIAT_CURRENCIES.contains(withdraw.symbol().value()))
+        {
+            throw new FiatCurrencyNotSupportedException(String.format("Only %s are supported", SUPPORTED_FIAT_CURRENCIES));
+
+        }
+        //return HttpResponse.ok();
     }
 
 
