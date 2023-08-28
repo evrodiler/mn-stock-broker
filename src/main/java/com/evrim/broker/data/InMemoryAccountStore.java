@@ -2,6 +2,7 @@ package com.evrim.broker.data;
 
 import com.evrim.broker.wallet.DepositFiatMoney;
 import com.evrim.broker.wallet.Wallet;
+import com.evrim.broker.wallet.WithdrawFiatMoney;
 import com.evrim.broker.watchlist.WatchList;
 import jakarta.inject.Singleton;
 
@@ -57,4 +58,30 @@ public class InMemoryAccountStore {
 
       return newWallet;
   }
+
+    public Wallet withdrawFromWallet(WithdrawFiatMoney withdraw) {
+
+        return addAvailableInWallet(withdraw);
+    }
+
+    private Wallet addAvailableInWallet(WithdrawFiatMoney withdraw) {
+        final var wallets = Optional.ofNullable(
+                walletsPerAccount.get(withdraw.accountId())
+        ).orElse(
+                new HashMap<>()
+        );
+        var oldWallet = Optional
+                .ofNullable(
+                        wallets.get(withdraw.walletId()))
+                .orElse(
+                        new Wallet(ACCOUNT_ID, withdraw.walletId(), withdraw.symbol(), BigDecimal.ZERO, BigDecimal.ZERO)
+                );
+        var newWallet = oldWallet.addAvailable(withdraw.amount());
+
+        //Update wallet in store
+        wallets.put(newWallet.walletId(), newWallet);
+        walletsPerAccount.put(newWallet.accountId(), wallets);
+
+        return newWallet;
+    }
 }

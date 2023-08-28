@@ -12,7 +12,7 @@ import static com.evrim.broker.wallet.WalletController.SUPPORTED_FIAT_CURRENCIES
 
 @Produces
 @Singleton
-@Requires(classes = = {FiatCurrencyNotSupportedException.class,ExceptionHandler.class})
+@Requires(classes = {FiatCurrencyNotSupportedException.class,ExceptionHandler.class})
 public class FiatCurrencyNotSupportedExceptionHandler implements
         ExceptionHandler<FiatCurrencyNotSupportedException, HttpResponse<CustomError>> {
 
@@ -22,6 +22,6 @@ public class FiatCurrencyNotSupportedExceptionHandler implements
                 new CustomError(HttpStatus.BAD_REQUEST.getCode(),
                         "UNSUPPORTED CURRENCY",
                         String.format("Only %s are supported", SUPPORTED_FIAT_CURRENCIES)
-        );
+        ));
     }
 }
